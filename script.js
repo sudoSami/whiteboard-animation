@@ -11,7 +11,7 @@ let currentPath = null;
 
 // Hand offset - tweak these to make the tip of the pen match the cursor
 // This depends on the specific hand image.
-const handOffsetX = -20; 
+const handOffsetX = -20;
 const handOffsetY = -20; // Adjusting for the pen tip
 
 // Setup Canvas Resolution
@@ -41,12 +41,15 @@ canvas.addEventListener('mouseout', stopDrawing);
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
     const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('mousedown', { windowX: touch.clientX, windowY: touch.clientY });
     startDrawing(touch);
 });
 canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
-    startDrawing(e.touches[0], true); // Logic reuse
+    draw(e.touches[0]);
+});
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    stopDrawing();
 });
 
 function getPos(e) {
@@ -65,14 +68,14 @@ function startDrawing(e) {
     const pos = getPos(e);
     currentPath = { points: [pos] };
     paths.push(currentPath);
-    
+
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
 }
 
 function draw(e) {
     if (!isDrawing) return;
-    
+
     // For touchmove we might need to handle it differently if reused, 
     // but standard mousemove logic works if getPos is generic.
     const pos = getPos(e);
@@ -104,17 +107,17 @@ function drawAllPaths() {
 // Animation Logic
 animateBtn.addEventListener('click', () => {
     if (paths.length === 0) return;
-    
+
     // Disable interaction
     canvas.style.pointerEvents = 'none';
     animateBtn.disabled = true;
     clearBtn.disabled = true;
-    
+
     // Show Hand
     hand.style.display = 'block';
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     playAnimation();
 });
 
@@ -126,26 +129,26 @@ clearBtn.addEventListener('click', () => {
 
 async function playAnimation() {
     ctx.beginPath();
-    
+
     for (const path of paths) {
         if (path.points.length === 0) continue;
 
         // Move hand to start
         updateHandPos(path.points[0]);
         ctx.moveTo(path.points[0].x, path.points[0].y);
-        
+
         // Draw path point by point
         for (let i = 1; i < path.points.length; i++) {
             const point = path.points[i];
-            
+
             await new Promise(r => setTimeout(r, 10)); // Speed of drawing
-            
+
             ctx.lineTo(point.x, point.y);
             ctx.stroke();
             updateHandPos(point);
         }
     }
-    
+
     // Finish
     canvas.style.pointerEvents = 'auto';
     animateBtn.disabled = false;

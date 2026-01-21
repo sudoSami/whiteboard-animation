@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteboard Animation Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Whiteboard Animation</h1>
+        <p>Draw something on the whiteboard below, then click "Animate" to see how the computer reconstructs your drawing stroke by stroke.</p>
+        
+        <div class="toolbar">
+            <button id="animateBtn">▶ Animate / Replay</button>
+            <button id="clearBtn">🗑 Clear Board</button>
+        </div>
+
+        <div class="whiteboard-wrapper">
+            <canvas id="whiteboard"></canvas>
+            <img src="hand.png" id="hand-cursor" alt="Hand holding marker">
+        </div>
+
+        <div class="info">
+            <h2>How it works (The Logic)</h2> 
+            <p>
+                1. <strong>Recording:</strong> As you draw, we capture the X and Y coordinates of your mouse movement into an array of "paths".<br>
+                2. <strong>Replay:</strong> When you click animate, we clear the canvas.<br>
+                3. <strong>Animation:</strong> We loop through those saved coordinates and redraw the lines frame-by-frame, moving the hand image to the current coordinate.
+            </p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
